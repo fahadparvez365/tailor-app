@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رباب ٹیلرز · رپورٹس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Noto Sans Arabic', 'Al Tarikh', 'Nafees', 'Jameel Noori Nastaleeq', sans-serif; }
+
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #e53e3e;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --purple: #805ad5;
+            --light-color: #f7fafc;
+            --dark-color: #2d3748;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --header-height: 80px;
+        }
+
+        body {
+            background: var(--primary-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .fullscreen-container {
+            width: 100%;
+            height: 100%;
+            background: var(--light-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            height: var(--header-height);
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 25px;
+            flex-shrink: 0;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 15px; padding: 8px 25px; }
+        .user-info h1 { font-size: 55px; font-weight: 900; }
+        .user-info span { font-size: 25px; font-weight: 800; color: white; margin-top: 20px; }
+
+        .main-content { flex: 1; overflow-y: auto; padding: 25px; background: #f0f4f8; }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary-color);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title { font-size: 26px; color: var(--primary-color); display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: var(--secondary-color); background: #ebf8ff; padding: 10px; border-radius: 12px; }
+
+        .today-date {
+            background: var(--secondary-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+
+        .stat-icon {
+            width: 55px; height: 55px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: white; flex-shrink: 0;
+        }
+
+        .stat-value { font-size: 22px; font-weight: 700; color: var(--primary-color); line-height: 1.2; }
+        .stat-label { font-size: 13px; color: #666; margin-top: 4px; font-weight: 600; }
+        .stat-sub { font-size: 11px; color: #999; margin-top: 3px; }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .chart-header i { color: var(--secondary-color); font-size: 18px; background: #ebf8ff; padding: 8px; border-radius: 10px; }
+        .chart-header h3 { color: var(--primary-color); font-size: 16px; font-weight: 700; }
+
+        .chart-container { position: relative; height: 250px; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            background: white;
+            color: var(--dark-color);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Report Section */
+        .report-section {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .section-header i { color: var(--secondary-color); font-size: 20px; background: #ebf8ff; padding: 8px; border-radius: 10px; }
+        .section-header h3 { color: var(--primary-color); font-size: 18px; font-weight: 700; }
+        .section-header .count {
+            margin-right: auto;
+            background: var(--secondary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Table */
+        .table-container { overflow-x: auto; border-radius: 10px; border: 1px solid #e2e8f0; }
+
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        table thead { background: var(--primary-color); color: white; }
+        table th { padding: 12px 15px; text-align: center; font-weight: 600; font-size: 14px; white-space: nowrap; }
+        table tbody tr { border-bottom: 1px solid #e2e8f0; transition: background 0.2s; }
+        table tbody tr:hover { background: #f0f9ff; }
+        table td { padding: 12px 15px; font-size: 14px; color: var(--dark-color); text-align: center; }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-danger { background: #fed7d7; color: #c53030; }
+        .badge-success { background: #c6f6d5; color: #276749; }
+
+        .empty-msg {
+            text-align: center;
+            padding: 35px;
+            color: #999;
+            font-size: 15px;
+        }
+
+        .empty-msg i { font-size: 35px; display: block; margin-bottom: 10px; color: #ccc; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="fullscreen-container">
+
+    <header class="app-header">
+        <div class="user-info">
+            <span>03045952882</span>
+            <span>بٹ چوک المدینہ مسجد کوٹلی آزاد کشمیر</span>
+            <h1>رباب ٹیلرز</h1>
+        </div>
+    </header>
+
+    <div class="main-content">
+
+        <div class="page-header">
+            <h2 class="page-title">
+                <i class="fas fa-chart-bar"></i> رپورٹس
+            </h2>
+            <div class="today-date"><i class="fas fa-calendar"></i> آج: {{ today }}</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#2b6cb0;"><i class="fas fa-calendar-day"></i></div>
+                <div>
+                    <div class="stat-value">Rs. {{ today_income | int }}</div>
+                    <div class="stat-label">آج کی کل رقم</div>
+                    <div class="stat-sub">وصول: Rs. {{ today_advance | int }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#38a169;"><i class="fas fa-calendar-week"></i></div>
+                <div>
+                    <div class="stat-value">Rs. {{ week_income | int }}</div>
+                    <div class="stat-label">اس ہفتے</div>
+                    <div class="stat-sub">پچھلے 7 دن</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#805ad5;"><i class="fas fa-calendar-alt"></i></div>
+                <div>
+                    <div class="stat-value">Rs. {{ month_income | int }}</div>
+                    <div class="stat-label">اس مہینے</div>
+                    <div class="stat-sub">یکم سے آج تک</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#e53e3e;"><i class="fas fa-money-bill-wave"></i></div>
+                <div>
+                    <div class="stat-value">Rs. {{ total_pending | int }}</div>
+                    <div class="stat-label">کل بقایا</div>
+                    <div class="stat-sub">{{ pending_customers | length }} کسٹمر</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#d69e2e;"><i class="fas fa-coins"></i></div>
+                <div>
+                    <div class="stat-value">Rs. {{ total_income | int }}</div>
+                    <div class="stat-label">کل آمدن</div>
+                    <div class="stat-sub">وصول: Rs. {{ total_advance | int }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#1a365d;"><i class="fas fa-users"></i></div>
+                <div>
+                    <div class="stat-value">{{ today_customers | length }}</div>
+                    <div class="stat-label">آج کے کسٹمر</div>
+                    <div class="stat-sub">آج کے آرڈر</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+
+            <!-- Daily Income Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>پچھلے 7 دن کی آمدن</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dailyIncomeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Daily Customers Line Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>پچھلے 7 دن کے کسٹمر</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dailyCustomersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Monthly Income Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-chart-area"></i>
+                    <h3>ماہانہ آمدن (6 مہینے)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyIncomeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Payment Status Doughnut -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>ادائیگی کی صورتحال</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="paymentStatusChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('today', this)">
+                <i class="fas fa-calendar-day"></i> آج کے کسٹمر ({{ today_customers | length }})
+            </button>
+            <button class="tab-btn" onclick="showTab('pending', this)">
+                <i class="fas fa-clock"></i> بقایا ({{ pending_customers | length }})
+            </button>
+            <button class="tab-btn" onclick="showTab('delivery_today', this)">
+                <i class="fas fa-truck"></i> آج ڈیلیوری ({{ today_delivery | length }})
+            </button>
+            <button class="tab-btn" onclick="showTab('delivery_tomorrow', this)">
+                <i class="fas fa-truck"></i> کل ڈیلیوری ({{ tomorrow_delivery | length }})
+            </button>
+        </div>
+
+        <!-- Tab: Today customers -->
+        <div class="tab-content active" id="tab-today">
+            <div class="report-section">
+                <div class="section-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h3>آج کے نئے کسٹمر</h3>
+                    <span class="count">{{ today_customers | length }}</span>
+                </div>
+                {% if today_customers %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>بقایا</th><th>ادائیگی</th><th>کل رقم</th>
+                                <th>ڈیلیوری</th><th>فون</th><th>نام</th><th>ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in today_customers %}
+                            <tr>
+                                <td>{% if c.remaining_balance and c.remaining_balance > 0 %}<span class="badge badge-danger">Rs. {{ c.remaining_balance | int }}</span>{% else %}<span class="badge badge-success">ادا</span>{% endif %}</td>
+                                <td>Rs. {{ c.advance_payment | int if c.advance_payment else 0 }}</td>
+                                <td>Rs. {{ c.total_amount | int if c.total_amount else 0 }}</td>
+                                <td>{{ c.delivery_date or '-' }}</td>
+                                <td>{{ c.phone or '-' }}</td>
+                                <td>{{ c.customer_name or '-' }}</td>
+                                <td>{{ c.customer_code or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-msg"><i class="fas fa-inbox"></i>آج کوئی نیا کسٹمر نہیں آیا</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab: Pending -->
+        <div class="tab-content" id="tab-pending">
+            <div class="report-section">
+                <div class="section-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>بقایا ادائیگی</h3>
+                    <span class="count">{{ pending_customers | length }}</span>
+                </div>
+                {% if pending_customers %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>بقایا</th><th>کل رقم</th><th>ڈیلیوری</th><th>فون</th><th>نام</th><th>ID</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for c in pending_customers %}
+                            <tr>
+                                <td><span class="badge badge-danger">Rs. {{ c.remaining_balance | int }}</span></td>
+                                <td>Rs. {{ c.total_amount | int if c.total_amount else 0 }}</td>
+                                <td>{{ c.delivery_date or '-' }}</td>
+                                <td>{{ c.phone or '-' }}</td>
+                                <td>{{ c.customer_name or '-' }}</td>
+                                <td>{{ c.customer_code or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-msg"><i class="fas fa-check-circle"></i>کوئی بقایا نہیں! سب ادائیگی مکمل ✅</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab: Today delivery -->
+        <div class="tab-content" id="tab-delivery_today">
+            <div class="report-section">
+                <div class="section-header">
+                    <i class="fas fa-truck"></i>
+                    <h3>آج ڈیلیوری</h3>
+                    <span class="count">{{ today_delivery | length }}</span>
+                </div>
+                {% if today_delivery %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>بقایا</th><th>کل رقم</th><th>سوٹ</th><th>فون</th><th>نام</th><th>ID</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for c in today_delivery %}
+                            <tr>
+                                <td>{% if c.remaining_balance and c.remaining_balance > 0 %}<span class="badge badge-danger">Rs. {{ c.remaining_balance | int }}</span>{% else %}<span class="badge badge-success">ادا</span>{% endif %}</td>
+                                <td>Rs. {{ c.total_amount | int if c.total_amount else 0 }}</td>
+                                <td>{{ c.suits or '-' }}</td>
+                                <td>{{ c.phone or '-' }}</td>
+                                <td>{{ c.customer_name or '-' }}</td>
+                                <td>{{ c.customer_code or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-msg"><i class="fas fa-truck"></i>آج کوئی ڈیلیوری نہیں</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab: Tomorrow delivery -->
+        <div class="tab-content" id="tab-delivery_tomorrow">
+            <div class="report-section">
+                <div class="section-header">
+                    <i class="fas fa-truck"></i>
+                    <h3>کل ڈیلیوری</h3>
+                    <span class="count">{{ tomorrow_delivery | length }}</span>
+                </div>
+                {% if tomorrow_delivery %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>بقایا</th><th>کل رقم</th><th>سوٹ</th><th>فون</th><th>نام</th><th>ID</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for c in tomorrow_delivery %}
+                            <tr>
+                                <td>{% if c.remaining_balance and c.remaining_balance > 0 %}<span class="badge badge-danger">Rs. {{ c.remaining_balance | int }}</span>{% else %}<span class="badge badge-success">ادا</span>{% endif %}</td>
+                                <td>Rs. {{ c.total_amount | int if c.total_amount else 0 }}</td>
+                                <td>{{ c.suits or '-' }}</td>
+                                <td>{{ c.phone or '-' }}</td>
+                                <td>{{ c.customer_name or '-' }}</td>
+                                <td>{{ c.customer_code or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-msg"><i class="fas fa-truck"></i>کل کوئی ڈیلیوری نہیں</div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ✅ Data from Flask
+    const dailyLabels = {{ daily_labels | safe }};
+    const dailyIncome = {{ daily_income | safe }};
+    const dailyCustomers = {{ daily_customers | safe }};
+    const monthlyLabels = {{ monthly_labels | safe }};
+    const monthlyIncome = {{ monthly_income | safe }};
+    const monthlyCustomersData = {{ monthly_customers_data | safe }};
+    const totalAdvance = {{ total_advance }};
+    const totalPending = {{ total_pending }};
+
+    Chart.defaults.font.family = "'Segoe UI', sans-serif";
+    Chart.defaults.color = '#2d3748';
+
+    // ✅ 1. Daily Income Bar Chart
+    new Chart(document.getElementById('dailyIncomeChart'), {
+        type: 'bar',
+        data: {
+            labels: dailyLabels,
+            datasets: [{
+                label: 'آمدن (Rs.)',
+                data: dailyIncome,
+                backgroundColor: 'rgba(43, 108, 176, 0.8)',
+                borderColor: '#2b6cb0',
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => 'Rs. ' + ctx.parsed.y.toLocaleString()
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: { callback: val => 'Rs.' + val }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ✅ 2. Daily Customers Line Chart
+    new Chart(document.getElementById('dailyCustomersChart'), {
+        type: 'line',
+        data: {
+            labels: dailyLabels,
+            datasets: [{
+                label: 'کسٹمر',
+                data: dailyCustomers,
+                borderColor: '#38a169',
+                backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#38a169',
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                fill: true,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ✅ 3. Monthly Income Bar Chart
+    new Chart(document.getElementById('monthlyIncomeChart'), {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'ماہانہ آمدن (Rs.)',
+                data: monthlyIncome,
+                backgroundColor: [
+                    'rgba(128, 90, 213, 0.8)',
+                    'rgba(43, 108, 176, 0.8)',
+                    'rgba(56, 161, 105, 0.8)',
+                    'rgba(214, 158, 46, 0.8)',
+                    'rgba(229, 62, 62, 0.8)',
+                    'rgba(26, 54, 93, 0.8)',
+                ],
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => 'Rs. ' + ctx.parsed.y.toLocaleString()
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: { callback: val => 'Rs.' + val }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ✅ 4. Payment Status Doughnut
+    new Chart(document.getElementById('paymentStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['وصول شدہ', 'بقایا'],
+            datasets: [{
+                data: [totalAdvance, totalPending],
+                backgroundColor: ['rgba(56, 161, 105, 0.85)', 'rgba(229, 62, 62, 0.85)'],
+                borderColor: ['#38a169', '#e53e3e'],
+                borderWidth: 2,
+                hoverOffset: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 20, font: { size: 13 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.label + ': Rs. ' + ctx.parsed.toLocaleString()
+                    }
+                }
+            }
+        }
+    });
+
+    // ✅ Tabs
+    function showTab(name, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

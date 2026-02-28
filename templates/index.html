@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لاگ ان - تیلر مینجمنٹ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* گلوبل سٹائلز */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Tahoma', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b2b5e 0%, #1a4a7a 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* لاگ ان کارڈ */
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 440px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.3);
+            padding: 48px 40px;
+            transition: transform 0.3s;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* لوگو سیکشن */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(145deg, #0b2b5e, #1e3c72);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(11, 43, 94, 0.3);
+        }
+
+        .logo-icon i {
+            font-size: 42px;
+            color: white;
+        }
+
+        .logo-section h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0b2b5e;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .logo-section p {
+            color: #5a6a7a;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* فارم گروپ */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #1e2a3a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            margin-left: 10px;
+            color: #0b2b5e;
+            font-size: 15px;
+        }
+
+        /* انپٹ فیلڈز */
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .input-field:focus {
+            border-color: #0b2b5e;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(11, 43, 94, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* لاگ ان بٹن */
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(145deg, #0b2b5e, #1e3c72);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 16px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(145deg, #0e3570, #1e3c72);
+            box-shadow: 0 15px 30px rgba(11, 43, 94, 0.3);
+        }
+
+        .login-btn i {
+            font-size: 18px;
+        }
+
+        /* ڈیمو کریڈینشل */
+        .demo-box {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px dashed #e2e8f0;
+            text-align: center;
+        }
+
+        .demo-box p {
+            color: #475569;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .credentials {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cred-badge {
+            background: #f1f5f9;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: #0b2b5e;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cred-badge i {
+            color: #0b2b5e;
+            font-size: 12px;
+        }
+
+        /* فوٹر */
+        .footer-text {
+            margin-top: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* ریسپانسیو */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 35px 25px;
+            }
+            
+            .logo-section h1 {
+                font-size: 26px;
+            }
+            
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .logo-icon i {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <!-- لوگو -->
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fas fa-cut"></i>
+            </div>
+            <h1>تیلر ماسٹر</h1>
+            <p>پیشہ ورانہ تیلر مینجمنٹ</p>
+        </div>
+
+        <!-- لاگ ان فارم - صرف ڈسپلے کے لیے -->
+        <form>
+            <!-- صارف نام -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-user"></i>
+                    صارف نام
+                </label>
+                <input type="text" class="input-field" placeholder="اپنا صارف نام درج کریں" value="admin" readonly onfocus="this.removeAttribute('readonly')">
+            </div>
+
+            <!-- پاس ورڈ -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-lock"></i>
+                    پاس ورڈ
+                </label>
+                <input type="password" class="input-field" placeholder="اپنا پاس ورڈ درج کریں" value="12345" readonly onfocus="this.removeAttribute('readonly')">
+            </div>
+
+            <!-- لاگ ان بٹن - صرف ڈیزائن -->
+            <button type="button" class="login-btn" onclick="alert('یہ صرف ڈیزائن ہے۔ بیک اینڈ نہیں ہے۔')">
+                <i class="fas fa-sign-in-alt"></i>
+                لاگ ان کریں
+            </button>
+        </form>
+
+        <!-- ڈیمو کریڈینشل -->
+        <div class="demo-box">
+            <p>ڈیمو لاگ ان</p>
+            <div class="credentials">
+                <span class="cred-badge">
+                    <i class="fas fa-user"></i>
+                    admin
+                </span>
+                <span class="cred-badge">
+                    <i class="fas fa-lock"></i>
+                    12345
+                </span>
+            </div>
+        </div>
+
+        <!-- فوٹر -->
+        <div class="footer-text">
+            <i class="fas fa-code"></i>
+            صرف فرنٹ اینڈ ڈیزائن
+        </div>
+    </div>
+</body>
+</html>

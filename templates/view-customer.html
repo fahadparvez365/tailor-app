@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رباب ٹیلرز · کسٹمر اپڈیٹ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Noto Sans Arabic', 'Al Tarikh', 'Nafees', 'Jameel Noori Nastaleeq', sans-serif; }
+
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #e53e3e;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --light-color: #f7fafc;
+            --dark-color: #2d3748;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --border-radius: 10px;
+            --header-height: 80px;
+        }
+
+        body {
+            background: var(--primary-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .fullscreen-container {
+            width: 100%;
+            height: 100%;
+            background: var(--light-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .app-header {
+            height: var(--header-height);
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .user-info { display: flex; align-items: center; gap: 15px; padding: 8px 25px; }
+        .user-info h1 { font-size: 55px; font-weight: 900; }
+        .user-info span { font-size: 25px; font-weight: 800; color: white; margin-top: 20px; }
+
+        /* Main */
+        .main-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: #f7fafc; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .page-title { font-size: 26px; color: var(--primary-color); display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: var(--secondary-color); background: #ebf8ff; padding: 10px; border-radius: 12px; }
+
+        /* Search Box */
+        .search-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 12px 20px;
+            transition: border 0.3s;
+        }
+
+        .search-box:focus-within { border-color: var(--secondary-color); }
+        .search-box i { color: var(--secondary-color); font-size: 20px; }
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            outline: none;
+            text-align: right;
+        }
+
+        /* Search Results */
+        .search-results {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .result-item:hover {
+            border-color: var(--secondary-color);
+            background: #ebf8ff;
+            transform: translateX(-3px);
+        }
+
+        .result-item .name { font-weight: 700; color: var(--primary-color); font-size: 16px; }
+        .result-item .details { font-size: 14px; color: #666; margin-top: 3px; }
+        .result-item .select-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        /* Success Message */
+        .alert-success {
+            background: #c6f6d5;
+            border: 2px solid #38a169;
+            color: #276749;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Form */
+        .form-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+
+        .form-section.visible { display: block; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .section-header i { color: var(--secondary-color); font-size: 22px; background: #ebf8ff; padding: 8px; border-radius: 10px; }
+        .section-header h3 { color: var(--primary-color); font-size: 20px; font-weight: 700; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group { margin-bottom: 0; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--dark-color); font-weight: 700; font-size: 14px; }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            text-align: right;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-control:focus { border-color: var(--secondary-color); background: white; outline: none; }
+
+        /* Measurements */
+        .measurements-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 15px;
+        }
+
+        .measurement-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .measurement-item:hover { border-color: var(--secondary-color); }
+        .measurement-item label { display: block; color: var(--primary-color); font-weight: 700; margin-bottom: 10px; font-size: 15px; }
+        .measurement-item input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: right;
+            outline: none;
+        }
+        .measurement-item input:focus { border-color: var(--secondary-color); }
+
+        /* Radio Options */
+        .option-group {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid #e2e8f0;
+        }
+
+        .option-title { font-weight: 700; margin-bottom: 12px; color: var(--primary-color); font-size: 15px; }
+
+        .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .radio-group label:hover { border-color: var(--secondary-color); background: #ebf8ff; }
+        .radio-group input[type="radio"] { accent-color: var(--secondary-color); }
+
+        /* Footer */
+        .form-footer {
+            padding: 20px 25px;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary { background: var(--secondary-color); color: white; }
+        .btn-primary:hover { background: #2c5282; transform: translateY(-2px); }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover { background: #2f855a; transform: translateY(-2px); }
+        .btn-danger { background: var(--accent-color); color: white; }
+        .btn-danger:hover { background: #c53030; transform: translateY(-2px); }
+
+        @media (max-width: 1200px) {
+            .measurements-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .measurements-grid, .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="fullscreen-container">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="user-info">
+            <span>03045952882</span>
+            <span>بٹ چوک المدینہ مسجد کوٹلی آزاد کشمیر</span>
+            <h1>رباب ٹیلرز</h1>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="content-area">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2 class="page-title">
+                    <i class="fas fa-user-edit"></i>
+                    کسٹمر اپڈیٹ کریں
+                </h2>
+            </div>
+
+            <!-- Success Message -->
+            <div class="alert-success" id="successMsg">
+                ✅ کسٹمر کامیابی سے اپڈیٹ ہو گیا!
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="کسٹمر کا نام یا فون نمبر لکھیں...">
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <!-- Form — hidden until customer selected -->
+            <form id="updateForm" method="POST" action="">
+
+                <!-- Basic Info -->
+                <div class="form-section" id="basicSection">
+                    <div class="section-header">
+                        <i class="fas fa-info-circle"></i>
+                        <h3>بنیادی معلومات</h3>
+                    </div>
+                    <div class="form-grid">
+                  
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> ڈیلیوری تاریخ *</label>
+                            <input type="date" class="form-control" name="delivery_date" id="f_delivery_date">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> آرڈر تاریخ *</label>
+                            <input type="date" class="form-control" name="order_date" id="f_order_date">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-sort-numeric-up"></i> سوٹ کی تعداد *</label>
+                            <input type="number" class="form-control" name="suits" id="f_suits" min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> فون نمبر *</label>
+                            <input type="tel" class="form-control" name="phone" id="f_phone" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> کسٹمر کا نام *</label>
+                            <input type="text" class="form-control" name="customer_name" id="f_customer_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-sort-numeric-down"></i> ID</label>
+                            <input type="text" class="form-control" name="customer_code" id="f_customer_code" readonly>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Measurements -->
+                <div class="form-section" id="measureSection">
+                    <div class="section-header">
+                        <i class="fas fa-ruler"></i>
+                        <h3>ناپ (انچ میں)</h3>
+                    </div>
+                    <div class="measurements-grid">
+ 
+                        <div class="measurement-item">
+                            <label>پاجامہ</label>
+                            <input type="number" name="pajama" id="f_pajama" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>پونچہ</label>
+                            <input type="number" name="poncha" id="f_poncha" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>شلوار</label>
+                            <input type="number" name="shalwar" id="f_shalwar" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>کمر</label>
+                            <input type="number" name="kamar" id="f_kamar" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>چھاتی</label>
+                            <input type="number" name="chest" id="f_chest" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>گلا</label>
+                            <input type="number" name="gala" id="f_gala" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>تیرہ</label>
+                            <input type="number" name="tera" id="f_tera" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>بازو</label>
+                            <input type="number" name="bazo" id="f_bazo" step="0.5">
+                        </div>
+
+                        <div class="measurement-item">
+                            <label>قمیض لمبائی</label>
+                            <input type="number" name="qameez_length" id="f_qameez_length" step="0.5">
+                        </div>
+
+                        <!-- Radio Options -->
+                        <div class="option-group">
+                            <div class="option-title">گیرہ</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="gera" id="gera_gol" value="gol"> گول</label>
+                                <label><input type="radio" name="gera" id="gera_choras" value="choras"> چورس</label>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-title">کالر یا بین</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="collar_type" id="collar_collar" value="collar"> کالر</label>
+                                <label><input type="radio" name="collar_type" id="collar_ban" value="ban"> بین</label>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-title">سلائی</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="silai" id="silai_single" value="single"> سنگل</label>
+                                <label><input type="radio" name="silai" id="silai_double" value="double"> ڈبل</label>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-title">سامنے جیب</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="front_pocket" id="fp_yes" value="yes"> ہاں</label>
+                                <label><input type="radio" name="front_pocket" id="fp_no" value="no"> نہیں</label>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-title">شلوار پاکٹ</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="shalwar_pocket" id="sp_yes" value="yes"> ہاں</label>
+                                <label><input type="radio" name="shalwar_pocket" id="sp_no" value="no"> نہیں</label>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-title">بٹن</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="button_type" id="bt_simple" value="simple"> سادہ</label>
+                                <label><input type="radio" name="button_type" id="bt_color" value="color"> رنگ</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="form-section" id="paymentSection">
+                    <div class="section-header">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>ادائیگی اور ہدایات</h3>
+                    </div>
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>بقایا</label>
+                            <input type="number" name="remaining_balance" id="f_remaining_balance" class="form-control" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ادائیگی *</label>
+                            <input type="number" name="advance_payment" id="f_advance_payment" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>کل رقم *</label>
+                            <input type="number" name="total_amount" id="f_total_amount" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:20px;">
+                        <label>خصوصی ہدایات</label>
+                        <textarea name="notes" id="f_notes" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="form-footer" id="formFooter" style="display:none;">
+        <button class="btn btn-danger" id="cancelBtn">
+            <i class="fas fa-times"></i> منسوخ کریں
+        </button>
+        <button class="btn btn-success" id="saveBtn">
+            <i class="fas fa-save"></i> اپڈیٹ کریں
+        </button>
+    </div>
+
+</div>
+
+<script>
+    let selectedCustomerId = null;
+
+    // ✅ Search
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    let searchTimer;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimer);
+        const q = this.value.trim();
+
+        if(q.length < 2) {
+            searchResults.style.display = 'none';
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        searchTimer = setTimeout(() => {
+            fetch(`/search-customer?q=${encodeURIComponent(q)}`)
+            .then(res => res.json())
+            .then(data => {
+                searchResults.style.display = 'block';
+                if(data.customers.length === 0) {
+                    searchResults.innerHTML = '<div class="no-results">❌ کوئی کسٹمر نہیں ملا</div>';
+                    return;
+                }
+                searchResults.innerHTML = data.customers.map(c => `
+                    <div class="result-item" onclick="selectCustomer(${c.id})">
+                        <div>
+                            <div class="name">${c.customer_name}</div>
+                            <div class="details">${c.phone} · ${c.customer_code}</div>
+                        </div>
+                        <button class="select-btn">منتخب کریں</button>
+                    </div>
+                `).join('');
+            });
+        }, 300);
+    });
+
+    // ✅ Select Customer - load data into form
+    function selectCustomer(id) {
+        fetch(`/get-customer/${id}`)
+        .then(res => res.json())
+        .then(c => {
+            selectedCustomerId = c.id;
+
+            // Basic info
+            document.getElementById('f_customer_code').value = c.customer_code || '';
+            document.getElementById('f_customer_name').value = c.customer_name || '';
+            document.getElementById('f_phone').value = c.phone || '';
+            document.getElementById('f_suits').value = c.suits || '';
+            document.getElementById('f_order_date').value = c.order_date || '';
+            document.getElementById('f_delivery_date').value = c.delivery_date || '';
+
+            // Measurements
+            document.getElementById('f_qameez_length').value = c.qameez_length || '';
+            document.getElementById('f_bazo').value = c.bazo || '';
+            document.getElementById('f_tera').value = c.tera || '';
+            document.getElementById('f_gala').value = c.gala || '';
+            document.getElementById('f_chest').value = c.chest || '';
+            document.getElementById('f_kamar').value = c.kamar || '';
+            document.getElementById('f_shalwar').value = c.shalwar || '';
+            document.getElementById('f_poncha').value = c.poncha || '';
+            document.getElementById('f_pajama').value = c.pajama || '';
+
+            // Radios
+            if(c.gera) document.querySelector(`input[name="gera"][value="${c.gera}"]`).checked = true;
+            if(c.collar_type) document.querySelector(`input[name="collar_type"][value="${c.collar_type}"]`).checked = true;
+            if(c.silai) document.querySelector(`input[name="silai"][value="${c.silai}"]`).checked = true;
+            if(c.front_pocket) document.querySelector(`input[name="front_pocket"][value="${c.front_pocket}"]`).checked = true;
+            if(c.shalwar_pocket) document.querySelector(`input[name="shalwar_pocket"][value="${c.shalwar_pocket}"]`).checked = true;
+            if(c.button_type) document.querySelector(`input[name="button_type"][value="${c.button_type}"]`).checked = true;
+
+            // Payment
+            document.getElementById('f_total_amount').value = c.total_amount || '';
+            document.getElementById('f_advance_payment').value = c.advance_payment || '';
+            document.getElementById('f_remaining_balance').value = c.remaining_balance || '';
+            document.getElementById('f_notes').value = c.notes || '';
+
+            // Form action update
+            document.getElementById('updateForm').action = `/update-customer/${c.id}`;
+
+            // Show form sections
+            document.getElementById('basicSection').classList.add('visible');
+            document.getElementById('measureSection').classList.add('visible');
+            document.getElementById('paymentSection').classList.add('visible');
+            document.getElementById('formFooter').style.display = 'flex';
+
+            // Hide search results
+            searchResults.style.display = 'none';
+            searchInput.value = c.customer_name;
+
+            // Scroll to form
+            document.getElementById('basicSection').scrollIntoView({behavior: 'smooth'});
+        });
+    }
+
+    // ✅ Auto calculate remaining
+    document.getElementById('f_total_amount').addEventListener('input', calcRemaining);
+    document.getElementById('f_advance_payment').addEventListener('input', calcRemaining);
+
+    function calcRemaining() {
+        const total = parseFloat(document.getElementById('f_total_amount').value) || 0;
+        const advance = parseFloat(document.getElementById('f_advance_payment').value) || 0;
+        document.getElementById('f_remaining_balance').value = total - advance;
+    }
+
+    // ✅ Save Button
+    document.getElementById('saveBtn').addEventListener('click', function() {
+        const form = document.getElementById('updateForm');
+        if(form.checkValidity()) {
+            form.submit();
+        } else {
+            form.reportValidity();
+        }
+    });
+
+    // ✅ Cancel Button
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        if(confirm('کیا آپ واقعی منسوخ کرنا چاہتے ہیں؟')) {
+            window.location.href = '/dashboard';
+        }
+    });
+
+    // ✅ Show success message if redirected with success=1
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('success') === '1') {
+        const msg = document.getElementById('successMsg');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 3000);
+    }
+</script>
+
+</body>
+</html>

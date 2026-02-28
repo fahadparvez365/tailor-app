@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رباب ٹیلرز · رسید</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Noto Sans Arabic', sans-serif; }
+
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #e53e3e;
+            --success-color: #38a169;
+            --light-color: #f7fafc;
+            --dark-color: #2d3748;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --header-height: 80px;
+        }
+
+        body {
+            background: var(--primary-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .fullscreen-container {
+            width: 100%;
+            min-height: calc(100vh - 20px);
+            background: var(--light-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            height: var(--header-height);
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 25px;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 15px; padding: 8px 25px; }
+        .user-info h1 { font-size: 50px; font-weight: 700; }
+        .user-info span { font-size: 20px; font-weight: 600; color: white; margin-top: 20px; }
+
+        .main-content { flex: 1; padding: 25px; background: #f7fafc; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .page-title { font-size: 26px; color: var(--primary-color); display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: var(--secondary-color); background: #ebf8ff; padding: 10px; border-radius: 12px; }
+
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 12px 20px;
+            transition: border 0.3s;
+        }
+
+        .search-box:focus-within { border-color: var(--secondary-color); }
+        .search-box i { color: var(--secondary-color); font-size: 20px; }
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            outline: none;
+            text-align: right;
+        }
+
+        .search-results { margin-top: 15px; display: none; }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .result-item:hover { border-color: var(--secondary-color); background: #ebf8ff; }
+        .result-item .name { font-weight: 700; color: var(--primary-color); font-size: 16px; }
+        .result-item .details { font-size: 14px; color: #666; margin-top: 3px; }
+        .result-item .select-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .no-results { text-align: center; padding: 20px; color: #999; font-size: 16px; }
+
+        .receipt-wrapper {
+            display: none;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .receipt-wrapper.visible { display: flex; }
+
+        /* 58mm receipt */
+        .receipt {
+            width: 220px;
+            background: white;
+            padding: 10px 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            border: 1px dashed #ccc;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            direction: rtl;
+        }
+
+        .receipt-header { text-align: center; margin-bottom: 8px; border-bottom: 1px dashed #000; padding-bottom: 8px; }
+        .receipt-header .shop-name { font-size: 14px; font-weight: bold; }
+        .receipt-header .shop-addr { font-size: 9px; margin-top: 2px; }
+        .receipt-header .shop-phone { font-size: 10px; margin-top: 2px; font-weight: bold; }
+
+        .receipt-section { margin-bottom: 6px; border-bottom: 1px dashed #ccc; padding-bottom: 6px; }
+        .receipt-section:last-child { border-bottom: none; }
+
+        .receipt-section .sec-title {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            background: #000;
+            color: white;
+            padding: 2px;
+            margin-bottom: 4px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            font-size: 10px;
+        }
+
+        .receipt-row .label { color: #555; }
+        .receipt-row .value { font-weight: bold; }
+
+        .receipt-measurements {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            font-size: 9px;
+        }
+
+        .m-item { display: flex; justify-content: space-between; background: #f5f5f5; padding: 2px 4px; border-radius: 2px; }
+
+        .receipt-footer {
+            text-align: center;
+            font-size: 9px;
+            margin-top: 6px;
+            border-top: 1px dashed #000;
+            padding-top: 6px;
+            color: #555;
+        }
+
+        .receipt-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            background: #000;
+            color: white;
+            padding: 3px 5px;
+            margin: 3px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary { background: var(--secondary-color); color: white; }
+        .btn-primary:hover { background: #2c5282; transform: translateY(-2px); }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover { background: #2f855a; transform: translateY(-2px); }
+        .btn-danger { background: var(--accent-color); color: white; }
+        .btn-danger:hover { background: #c53030; transform: translateY(-2px); }
+
+        .status-msg {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            display: none;
+        }
+
+        .status-connecting { background: #feebc8; color: #b7791f; }
+        .status-success { background: #c6f6d5; color: #276749; }
+        .status-error { background: #fed7d7; color: #c53030; }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            @page {
+                size: 58mm auto;
+                margin: 0;
+            }
+
+            html, body {
+                width: 58mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            body * { visibility: hidden !important; }
+
+            #printArea, #printArea * { visibility: visible !important; }
+
+            #printArea {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 58mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            #printArea .receipt {
+                width: 58mm !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 3mm 2mm !important;
+                font-size: 9px !important;
+                font-family: 'Courier New', monospace !important;
+            }
+
+            .receipt-measurements {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .fullscreen-container,
+            .app-header,
+            .main-content,
+            .search-section,
+            .action-buttons,
+            .status-msg,
+            .page-header {
+                display: none !important;
+            }
+
+            .receipt-wrapper {
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="fullscreen-container">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="user-info">
+            <span>03045952882</span>
+            <span>بٹ چوک المدینہ مسجد کوٹلی آزاد کشمیر</span>
+            <h1>رباب ٹیلرز</h1>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <div class="main-content">
+
+        <div class="page-header">
+            <h2 class="page-title">
+                <i class="fas fa-receipt"></i>
+                رسید بنائیں
+            </h2>
+        </div>
+
+        <div class="status-msg" id="statusMsg"></div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="کسٹمر کا نام یا فون نمبر لکھیں...">
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <!-- Receipt Preview - یہ print area بھی ہے -->
+        <div class="receipt-wrapper" id="receiptWrapper">
+            <div id="printArea">
+                <div class="receipt" id="receiptContent">
+
+                    <div class="receipt-header">
+                        <div class="shop-name">رباب ٹیلرز</div>
+                        <div class="shop-addr">بٹ چوک المدینہ مسجد کوٹلی آزاد کشمیر</div>
+                        <div class="shop-phone">📞 03045952882</div>
+                    </div>
+
+                    <div class="receipt-section">
+                        <div class="sec-title">کسٹمر معلومات</div>
+                        <div class="receipt-row">
+                            <span class="label">نام:</span>
+                            <span class="value" id="r_name">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">فون:</span>
+                            <span class="value" id="r_phone">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">ID:</span>
+                            <span class="value" id="r_code">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">آرڈر تاریخ:</span>
+                            <span class="value" id="r_order_date">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">ڈیلیوری:</span>
+                            <span class="value" id="r_delivery_date">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">سوٹ:</span>
+                            <span class="value" id="r_suits">-</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-section">
+                        <div class="sec-title">ناپ (انچ)</div>
+                        <div class="receipt-measurements">
+                            <div class="m-item"><span>قمیض</span><span id="r_qameez">-</span></div>
+                            <div class="m-item"><span>بازو</span><span id="r_bazo">-</span></div>
+                            <div class="m-item"><span>تیرہ</span><span id="r_tera">-</span></div>
+                            <div class="m-item"><span>گلا</span><span id="r_gala">-</span></div>
+                            <div class="m-item"><span>چھاتی</span><span id="r_chest">-</span></div>
+                            <div class="m-item"><span>کمر</span><span id="r_kamar">-</span></div>
+                            <div class="m-item"><span>شلوار</span><span id="r_shalwar">-</span></div>
+                            <div class="m-item"><span>پونچہ</span><span id="r_poncha">-</span></div>
+                            <div class="m-item"><span>پاجامہ</span><span id="r_pajama">-</span></div>
+                        </div>
+                        <div style="margin-top:4px; font-size:9px;">
+                            <div class="receipt-row"><span class="label">گیرہ:</span><span id="r_gera">-</span></div>
+                            <div class="receipt-row"><span class="label">کالر:</span><span id="r_collar">-</span></div>
+                            <div class="receipt-row"><span class="label">سلائی:</span><span id="r_silai">-</span></div>
+                            <div class="receipt-row"><span class="label">سامنے جیب:</span><span id="r_fp">-</span></div>
+                            <div class="receipt-row"><span class="label">شلوار پاکٹ:</span><span id="r_sp">-</span></div>
+                            <div class="receipt-row"><span class="label">بٹن:</span><span id="r_bt">-</span></div>
+                        </div>
+                    </div>
+
+                    <div class="receipt-section">
+                        <div class="sec-title">ادائیگی</div>
+                        <div class="receipt-total-row">
+                            <span>کل رقم</span>
+                            <span id="r_total">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">ادائیگی:</span>
+                            <span class="value" id="r_advance">-</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">بقایا:</span>
+                            <span class="value" id="r_remaining" style="color:#e53e3e;">-</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-section" id="notesSection" style="display:none;">
+                        <div class="sec-title">ہدایات</div>
+                        <div style="font-size:9px;" id="r_notes"></div>
+                    </div>
+
+                    <div class="receipt-footer">
+                        شکریہ! دوبارہ تشریف لائیں 🙏
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons - Bluetooth ہٹا دیا، موبائل پرنٹ بٹن شامل کیا -->
+        <div class="action-buttons" id="actionButtons" style="display:none;">
+            <button class="btn btn-success" id="printMobileBtn">
+                <i class="fas fa-print"></i> رسید پرنٹ کریں
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                <i class="fas fa-times"></i> صاف کریں
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ✅ Search
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimer;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimer);
+        const q = this.value.trim();
+        if(q.length < 2) {
+            searchResults.style.display = 'none';
+            searchResults.innerHTML = '';
+            return;
+        }
+        searchTimer = setTimeout(() => {
+            fetch(`/search-customer?q=${encodeURIComponent(q)}`)
+            .then(res => res.json())
+            .then(data => {
+                searchResults.style.display = 'block';
+                if(data.customers.length === 0) {
+                    searchResults.innerHTML = '<div class="no-results">❌ کوئی کسٹمر نہیں ملا</div>';
+                    return;
+                }
+                searchResults.innerHTML = data.customers.map(c => `
+                    <div class="result-item" onclick="loadReceipt(${c.id})">
+                        <div>
+                            <div class="name">${c.customer_name}</div>
+                            <div class="details">${c.phone} · ${c.customer_code}</div>
+                        </div>
+                        <button class="select-btn">رسید بنائیں</button>
+                    </div>
+                `).join('');
+            });
+        }, 300);
+    });
+
+    // ✅ Load customer data
+    function loadReceipt(id) {
+        fetch(`/get-customer/${id}`)
+        .then(res => res.json())
+        .then(c => {
+            document.getElementById('r_name').textContent = c.customer_name || '-';
+            document.getElementById('r_phone').textContent = c.phone || '-';
+            document.getElementById('r_code').textContent = c.customer_code || '-';
+            document.getElementById('r_order_date').textContent = c.order_date || '-';
+            document.getElementById('r_delivery_date').textContent = c.delivery_date || '-';
+            document.getElementById('r_suits').textContent = c.suits || '-';
+
+            document.getElementById('r_qameez').textContent = c.qameez_length || '-';
+            document.getElementById('r_bazo').textContent = c.bazo || '-';
+            document.getElementById('r_tera').textContent = c.tera || '-';
+            document.getElementById('r_gala').textContent = c.gala || '-';
+            document.getElementById('r_chest').textContent = c.chest || '-';
+            document.getElementById('r_kamar').textContent = c.kamar || '-';
+            document.getElementById('r_shalwar').textContent = c.shalwar || '-';
+            document.getElementById('r_poncha').textContent = c.poncha || '-';
+            document.getElementById('r_pajama').textContent = c.pajama || '-';
+
+            const geraMap = {gol: 'گول', choras: 'چورس'};
+            const collarMap = {collar: 'کالر', ban: 'بین'};
+            const silaiMap = {single: 'سنگل', double: 'ڈبل'};
+            const yesNo = {yes: 'ہاں', no: 'نہیں'};
+            const btnMap = {simple: 'سادہ', color: 'رنگ'};
+
+            document.getElementById('r_gera').textContent = geraMap[c.gera] || '-';
+            document.getElementById('r_collar').textContent = collarMap[c.collar_type] || '-';
+            document.getElementById('r_silai').textContent = silaiMap[c.silai] || '-';
+            document.getElementById('r_fp').textContent = yesNo[c.front_pocket] || '-';
+            document.getElementById('r_sp').textContent = yesNo[c.shalwar_pocket] || '-';
+            document.getElementById('r_bt').textContent = btnMap[c.button_type] || '-';
+
+            document.getElementById('r_total').textContent = c.total_amount ? `Rs. ${c.total_amount}` : '-';
+            document.getElementById('r_advance').textContent = c.advance_payment ? `Rs. ${c.advance_payment}` : '-';
+            document.getElementById('r_remaining').textContent = c.remaining_balance ? `Rs. ${c.remaining_balance}` : '-';
+
+            if(c.notes) {
+                document.getElementById('r_notes').textContent = c.notes;
+                document.getElementById('notesSection').style.display = 'block';
+            } else {
+                document.getElementById('notesSection').style.display = 'none';
+            }
+
+            document.getElementById('receiptWrapper').classList.add('visible');
+            document.getElementById('actionButtons').style.display = 'flex';
+            searchResults.style.display = 'none';
+            searchInput.value = c.customer_name;
+
+            document.getElementById('receiptWrapper').scrollIntoView({behavior: 'smooth'});
+        });
+    }
+
+    // ✅ موبائل اور ڈیسک ٹاپ دونوں کے لیے پرنٹ
+    // صرف رسید پرنٹ ہوگی، باقی صفحہ نہیں
+    document.getElementById('printMobileBtn').addEventListener('click', function() {
+        window.print();
+    });
+
+    // ✅ Clear
+    document.getElementById('clearBtn').addEventListener('click', function() {
+        searchInput.value = '';
+        searchResults.style.display = 'none';
+        searchResults.innerHTML = '';
+        document.getElementById('receiptWrapper').classList.remove('visible');
+        document.getElementById('actionButtons').style.display = 'none';
+        document.getElementById('statusMsg').style.display = 'none';
+    });
+</script>
+
+</body>
+</html>

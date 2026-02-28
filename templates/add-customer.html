@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>رباب ٹیلرز · نیا کسٹمر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Noto Sans Arabic', 'Al Tarikh', 'Nafees', 'Jameel Noori Nastaleeq', sans-serif;
+        }
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #e53e3e;
+            --light-color: #f7fafc;
+            --dark-color: #2d3748;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --header-height: 80px;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            background: var(--primary-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .fullscreen-container {
+            width: 100%;
+            height: 100%;
+            background: var(--light-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .app-header {
+            height: var(--header-height);
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 25px;
+            box-shadow: var(--shadow);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 5px 20px;
+        }
+        .user-info span { font-size: 20px; font-weight: 800; color: white; margin-top: 20px; }
+        .user-info h1 { font-weight: 800; font-size: 50px; }
+        .main-content { flex: 1; display: flex; overflow: hidden; }
+        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: #f7fafc; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        .page-title { font-size: 26px; color: var(--primary-color); display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: var(--secondary-color); background: #ebf8ff; padding: 10px; border-radius: 12px; }
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        .section-header i { color: var(--secondary-color); font-size: 22px; background: #ebf8ff; padding: 8px; border-radius: 10px; }
+        .section-header h3 { color: var(--primary-color); font-size: 20px; font-weight: 700; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 20px; }
+        .form-group { margin-bottom: 0; }
+        .form-group label { display: flex; gap: 8px; margin-bottom: 8px; color: var(--dark-color); font-weight: 700; font-size: 14px; }
+        .form-group label i { color: var(--secondary-color); width: 20px; }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            text-align: right;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        .form-control:focus { border-color: var(--secondary-color); background: white; box-shadow: 0 0 0 3px rgba(43,108,176,0.1); outline: none; }
+        
+        /* Measurements Grid */
+        .measurements-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 15px; }
+        .measurement-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .measurement-item:hover { border-color: var(--secondary-color); box-shadow: 0 5px 15px rgba(43,108,176,0.1); }
+        .measurement-item label { display: flex; align-items: center; gap: 8px; color: var(--primary-color); font-weight: 700; margin-bottom: 12px; font-size: 16px; }
+        .measurement-item label i { color: var(--secondary-color); font-size: 18px; }
+        .measurement-item input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: right;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .measurement-item input:focus { border-color: var(--secondary-color); }
+        
+        .option-group { background: #f8fafc; padding: 18px; border-radius: 12px; border: 2px solid #e2e8f0; }
+        .option-title { font-weight: 700; margin-bottom: 15px; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-size: 16px; }
+        .radio-group { display: flex; flex-wrap: wrap; gap: 12px; }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 6px 15px;
+            border-radius: 30px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .radio-group label:hover { border-color: var(--secondary-color); background: #ebf8ff; }
+        .radio-group input[type="radio"] { width: 16px; height: 16px; margin-left: 5px; accent-color: var(--secondary-color); }
+        
+        .form-footer {
+            padding: 25px;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover { background: #2f855a; transform: translateY(-2px); }
+        .btn-danger { background: var(--accent-color); color: white; }
+        .btn-danger:hover { background: #c53030; transform: translateY(-2px); }
+        
+        @media (max-width: 1200px) { .measurements-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) {
+            .measurements-grid, .form-grid { grid-template-columns: 1fr; }
+            .form-footer { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+    <!-- ====== PWA ====== -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#1a365d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="رباب ٹیلرز">
+    <link rel="apple-touch-icon" href="/static/logo tailor.png">
+    <script src="/static/pwa.js" defer></script>
+    <!-- ====== PWA KHATAM ====== -->
+</head>
+<body>
+<div class="fullscreen-container">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="user-info">
+            <span>03045952882</span>
+            <span>بٹ چوک المدینہ مسجد کوٹلی آزاد کشمیر</span>
+            <h1>رباب ٹیلرز</h1>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="content-area">
+
+            <div class="page-header">
+                <h2 class="page-title">
+                    <i class="fas fa-user-plus"></i>
+                    نیا کسٹمر شامل کریں
+                </h2>
+            </div>
+
+            {% if success %}
+            <div id="successMsg" style="background:#c6f6d5;border:2px solid #38a169;color:#276749;padding:15px 25px;border-radius:12px;font-size:18px;font-weight:700;text-align:center;margin-bottom:20px;">
+                ✅ کسٹمر کامیابی سے محفوظ ہو گیا!
+            </div>
+            <script>setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 3000);</script>
+            {% endif %}
+
+            <form id="customer-form" method="POST" action="/add-customer">
+
+                <!-- Basic Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-info-circle"></i>
+                        <h3>بنیادی معلومات</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-check"></i> ڈیلیوری تاریخ *</label>
+                            <input type="date" class="form-control" name="delivery_date" id="delivery_date" required tabindex="6">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> آرڈر تاریخ *</label>
+                            <input type="date" class="form-control" name="order_date" id="order_date" required tabindex="5">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-sort-numeric-up"></i> سوٹ کی تعداد *</label>
+                            <input type="number" class="form-control" name="suits" min="1" value="1" required tabindex="4">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> فون نمبر *</label>
+                            <input type="tel" class="form-control" name="phone" placeholder="0300-1234567" required tabindex="3">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> کسٹمر کا نام *</label>
+                            <input type="text" class="form-control" name="customer_name" placeholder="مکمل نام درج کریں" required tabindex="2">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-sort-numeric-down"></i> ID *</label>
+                            <input type="text" class="form-control" name="customer_code" value="{{ auto_id }}" required tabindex="1" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Measurements - Dynamic from database settings -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-ruler"></i>
+                        <h3>ناپ (میمنٹس) · انچ میں</h3>
+                    </div>
+                    <div class="measurements-grid">
+
+                        <!-- ✅ Sirf active fields dikhenge jo settings mein on hain -->
+                        {% for field in fields %}
+                        <div class="measurement-item">
+                            <label><i class="fas fa-tshirt"></i> {{ field.field_label }}</label>
+                            <input type="text" name="{{ field.field_name }}" step="0.5">
+                        </div>
+                        {% endfor %}
+
+                        <!-- Radio options - ye hamesha rahenge -->
+                        <div class="option-group">
+                            <div class="option-title">گیرہ</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="gera" value="gol" checked> گول</label>
+                                <label><input type="radio" name="gera" value="choras"> چورس</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <div class="option-title">کالر یا بین</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="collar_type" value="collar" checked> کالر</label>
+                                <label><input type="radio" name="collar_type" value="ban"> بین</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <div class="option-title">سلائی</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="silai" value="single" checked> سنگل</label>
+                                <label><input type="radio" name="silai" value="double"> ڈبل</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <div class="option-title">سامنے جیب</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="front_pocket" value="yes" checked> ہاں</label>
+                                <label><input type="radio" name="front_pocket" value="no"> نہیں</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <div class="option-title">شلوار پاکٹ</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="shalwar_pocket" value="yes" checked> ہاں</label>
+                                <label><input type="radio" name="shalwar_pocket" value="no"> نہیں</label>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <div class="option-title">بٹن</div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="button_type" value="simple" checked> سادہ</label>
+                                <label><input type="radio" name="button_type" value="color"> رنگ</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>ادائیگی اور ہدایات</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>بقایا</label>
+                            <input type="number" name="remaining_balance" id="remaining_balance" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>ادائیگی *</label>
+                            <input type="number" name="advance_payment" id="advance_payment" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>کل رقم *</label>
+                            <input type="number" name="total_amount" id="total_amount" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:20px;">
+                        <label>خصوصی ہدایات</label>
+                        <textarea name="notes" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="form-footer">
+        <button class="btn btn-danger" id="cancelBtn">
+            <i class="fas fa-times"></i> منسوخ کریں
+        </button>
+        <button class="btn btn-success" id="saveOnlyBtn">
+            <i class="fas fa-check"></i> صرف محفوظ کریں
+        </button>
+    </div>
+
+</div>
+
+<script>
+    // Auto dates
+    const today = new Date();
+    document.getElementById('order_date').value =
+        `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const delivery = new Date();
+    delivery.setDate(delivery.getDate() + 7);
+    document.getElementById('delivery_date').value =
+        `${delivery.getFullYear()}-${String(delivery.getMonth()+1).padStart(2,'0')}-${String(delivery.getDate()).padStart(2,'0')}`;
+
+    // Auto remaining
+    function calculateRemaining() {
+        let total = parseFloat(document.getElementById('total_amount').value) || 0;
+        let advance = parseFloat(document.getElementById('advance_payment').value) || 0;
+        document.getElementById('remaining_balance').value = total - advance;
+    }
+    document.getElementById('total_amount').addEventListener('input', calculateRemaining);
+    document.getElementById('advance_payment').addEventListener('input', calculateRemaining);
+
+    // Cancel
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        if(confirm('کیا آپ فارم منسوخ کرنا چاہتے ہیں؟')) {
+            window.location.href = '/dashboard';
+        }
+    });
+
+    // Save
+    document.getElementById('saveOnlyBtn').addEventListener('click', function() {
+        const form = document.getElementById('customer-form');
+        if(form.checkValidity()) {
+            form.submit();
+        } else {
+            form.reportValidity();
+        }
+    });
+</script>
+
+</body>
+</html>
